@@ -12,6 +12,7 @@ import processing.boardobject.*;
  * @reviewer Himanshu Jain
  */
 public class CurveBuilder {
+	
 	public static BoardObject drawCurve(
 			ArrayList<Pixel> pixels,
 			IBoardObjectOperation newboardOp,
@@ -37,7 +38,7 @@ public class CurveBuilder {
 		ClientBoardState.maps.insertObjectIntoMaps(curveObj);
 		
 		//Push BoardObject in undo stack
-		stackUtil(curveObj);
+		pushIntoStack(curveObj);
 		
 		return curveObj;
 	}
@@ -89,13 +90,12 @@ public class CurveBuilder {
 		ClientBoardState.maps.insertObjectIntoMaps(eraseObj);
 		
 		//Push BoardObject in undo stack
-		stackUtil(eraseObj);
+		pushIntoStack(eraseObj);
 		
 		return eraseObj;
 	}
-	private static void stackUtil(BoardObject newObj) {
-		
-		UndoRedo.pushIntoStack(newObj);
 	
+	private static void pushIntoStack(BoardObject newObj) {
+		UndoRedo.pushIntoStack(newObj);
 	}	
 }

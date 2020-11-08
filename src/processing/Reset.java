@@ -2,7 +2,7 @@ package processing;
 
 import java.util.ArrayList;
 
-import processing.boardobject.BoardObject;
+import processing.boardobject.*;
 import processing.utility.*;
 /**
  * Reset Class clears the screen
@@ -54,20 +54,19 @@ public class Reset {
 		
 		ObjectId newObjId = new ObjectId(newUserId, newTimestamp);
 		
-		/* Creates Object of the white rectangle acting as clear screen mask */
-		BoardObject resetObj = 
-				new BoardObject(pixels, newObjId, newTimestamp, newUserId, reset);
+		ArrayList<Pixel> prevPixels = new ArrayList<Pixel>();
 		
-		//Insert BoardObject in the Map
-		ClientBoardState.maps.insertObjectIntoMaps(resetObj);
-				
-		//Push BoardObject in undo stack
-		stackUtil(resetObj);
-	}
-	
-	private static void stackUtil(BoardObject newObj) {
+		IBoardObjectOperation newBoardOp = new CreateOperation();
 		
-		UndoRedo.pushIntoStack(newObj);
-	
+		CurveBuilder.drawCurve(
+				pixels,
+				newBoardOp,
+				newObjId,
+				newTimestamp,
+				newUserId,
+				prevPixels,
+				reset
+				);
+		
 	}
 }
