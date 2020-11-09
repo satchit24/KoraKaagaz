@@ -2,6 +2,7 @@ package processing;
 
 import java.util.ArrayList;
 
+import infrastructure.validation.logger.*;
 import processing.boardobject.*;
 import processing.utility.*;
 /**
@@ -14,6 +15,7 @@ import processing.utility.*;
  */
 public class Reset {
 	
+	private static ILogger logger = LoggerFactory.getLoggerInstance();
 	/*
 	 *  The function makes a white filled rectangle object
 	 * covers the whole screen with undo enabled
@@ -80,6 +82,12 @@ public class Reset {
 				prevPixels,
 				reset
 		);
+		
+		logger.log(
+				ModuleID.PROCESSING,
+				LogLevel.SUCCESS,
+				"Screen Reset done Successfully"
+				);
 		
 	}
 }

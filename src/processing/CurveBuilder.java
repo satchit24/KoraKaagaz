@@ -72,12 +72,6 @@ public class CurveBuilder {
 			
 		}
 		
-		logger.log(
-				ModuleID.PROCESSING, 
-				LogLevel.SUCCESS, 
-				"Created BoardObject and successfully processed the curve"
-		);
-		
 		return curveObj;
 	}
 	
@@ -108,7 +102,6 @@ public class CurveBuilder {
 		
 		for(int i = 0; i < pixelSize; i++)
 		{
-			
 			//White intensity object
 			Intensity whiteIntensity = new Intensity(r,g,b);
 			
@@ -146,7 +139,7 @@ public class CurveBuilder {
 			);
 			
 		}
-		
+
 		try {
 			//Push BoardObject in undo stack
 			pushToStack(eraseObj);
@@ -166,10 +159,11 @@ public class CurveBuilder {
 				LogLevel.SUCCESS, 
 				"Created BoardObject and successfully processed the eraser"
 		);
+
 		
 		return eraseObj;
 	}
-	
+
 	private static void pushToStack(BoardObject newObj) {
 		UndoRedo.pushIntoStack(newObj);
 	}	
