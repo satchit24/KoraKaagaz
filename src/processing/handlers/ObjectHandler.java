@@ -29,8 +29,8 @@ public class ObjectHandler implements INotificationHandler{
 		try {
 				boardObject = (BoardObject)Serialize.deSerialize(message);
 				
-				IBoardObjectOperation iBoardOp = boardObject.getOperation();
-				BoardObjectOperationType boardOp = iBoardOp.getOperationType();
+				IBoardObjectOperation boardOperationType = boardObject.getOperation();
+				BoardObjectOperationType boardOp = boardOperationType.getOperationType();
 				
 				UserId newUserId = boardObject.getUserId();
 				
@@ -46,7 +46,7 @@ public class ObjectHandler implements INotificationHandler{
 					
 					CurveBuilder.drawCurve(
 							newPixel,
-							iBoardOp,
+							boardOperationType,
 							newObjId,
 							newTimestamp,
 							newUserId,
@@ -59,29 +59,48 @@ public class ObjectHandler implements INotificationHandler{
 				case DELETE:
 					
 					SelectDelete.delete(boardObject, newUserId);
-					
+					break;
 				case ROTATE:
 					
-					ParameterizedOperationsUtil.rotationUtil(boardObject, newUserId, angleOfRotation);
+					Angle angleOfRotation = ((
+							RotateOperation)
+							boardOperationType).
+							getAngle();
 					
+					ParameterizedOperationsUtil.rotationUtil(
+							boardObject,
+							newUserId,
+							angleOfRotation
+					);
+					break;
 				case COLOR_CHANGE:
 					
+					Intensity newIntensity = ((
+							ColorChangeOperation)
+							boardOperationType).
+							getIntensity();
 					
-					ParameterizedOperationsUtil.colorChangeUtil(boardObject, newUserId, newIntensity);
-					
+					ParameterizedOperationsUtil.colorChangeUtil(
+							boardObject,
+							newUserId,
+							newIntensity
+					);
+					break;
 				default:
 					
 					logger.log(
 							ModuleID.PROCESSING,
 							LogLevel.ERROR,
+							"[#" + Thread.currentThread().getId() + "] "+
 							"Undefined Operation Type" + boardOp
 					);
-					
+					break;
 				}
 		} catch (ClassNotFoundException e) {
 			logger.log(
 					ModuleID.PROCESSING,
 					LogLevel.ERROR,
+					"[#" + Thread.currentThread().getId() + "] " +
 					"BoardObject Class not found while deserializing"
 			);
 			
@@ -89,6 +108,7 @@ public class ObjectHandler implements INotificationHandler{
 			logger.log(
 					ModuleID.PROCESSING,
 					LogLevel.ERROR,
+					"[#" + Thread.currentThread().getId() + "] " +
 					"BoardObject IO not found while deserializing"
 			);
 			
