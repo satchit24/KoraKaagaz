@@ -1,12 +1,11 @@
 package processing.handlers;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
-import infrastructure.validation.logger.ILogger;
-import infrastructure.validation.logger.LogLevel;
-import infrastructure.validation.logger.LoggerFactory;
-import infrastructure.validation.logger.ModuleID;
+import infrastructure.validation.logger.*;
 import processing.threading.*;
+import processing.utility.*;
 import processing.*;
 import processing.boardobject.*;
 import networking.INotificationHandler;
@@ -25,24 +24,72 @@ public class ObjectHandler implements INotificationHandler{
 	
 	public static void handleBoardObject(String message) {
 		
-
+		BoardObject boardObject;
+		
 		try {
-				BoardObject boardObject = (BoardObject)Serialize.deSerialize(message);
-				boardObject.getOperation();
+				boardObject = (BoardObject)Serialize.deSerialize(message);
+				
+				IBoardObjectOperation iBoardOp = boardObject.getOperation();
+				BoardObjectOperationType boardOp = iBoardOp.getOperationType();
+				
+				UserId newUserId = boardObject.getUserId();
+				
+				switch(boardOp) {
+				
+				case CREATE:
+					
+					ArrayList<Pixel> newPixel = boardObject.getPixels();
+					ObjectId newObjId = boardObject.getObjectId();
+					Timestamp newTimestamp = boardObject.getTimestamp();
+					boolean newReset = boardObject.isResetObject();
+					ArrayList<Pixel> newPrevPixel = boardObject.getPrevIntensity();
+					
+					CurveBuilder.drawCurve(
+							newPixel,
+							iBoardOp,
+							newObjId,
+							newTimestamp,
+							newUserId,
+							newPrevPixel,
+							newReset
+					);
+					
+					CommunicateChange.provideChanges(newPixel, newPrevPixel);
+					break;
+				case DELETE:
+					
+					SelectDelete.delete(boardObject, newUserId);
+					
+				case ROTATE:
+					
+					ParameterizedOperationsUtil.rotationUtil(boardObject, newUserId, angleOfRotation);
+					
+				case COLOR_CHANGE:
+					
+					
+					ParameterizedOperationsUtil.colorChangeUtil(boardObject, newUserId, newIntensity);
+					
+				default:
+					
+					logger.log(
+							ModuleID.PROCESSING,
+							LogLevel.ERROR,
+							"Undefined Operation Type" + boardOp
+					);
+					
+				}
 		} catch (ClassNotFoundException e) {
-			//Log the exception
 			logger.log(
 					ModuleID.PROCESSING,
 					LogLevel.ERROR,
-					"Class Not Found"
+					"BoardObject Class not found while deserializing"
 			);
 			
 		} catch (IOException e) {
-			//Log the exception
 			logger.log(
 					ModuleID.PROCESSING,
 					LogLevel.ERROR,
-					"IO Not Found"
+					"BoardObject IO not found while deserializing"
 			);
 			
 		}
