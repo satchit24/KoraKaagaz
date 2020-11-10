@@ -24,11 +24,18 @@ public class ObjectHandler implements INotificationHandler{
 	
 	public static void handleBoardObject(String message) {
 		
+		/*
+		 * Message String is deserialize into BoardObject
+		 * and from that parameters are extracted
+		 * Corresponding operation is performed and
+		 * BoardObject along with changes is sent to UI
+		 */
 		BoardObject boardObject;
 		
 		try {
 				boardObject = (BoardObject)Serialize.deSerialize(message);
 				
+				//get operation performed on the BoardObject
 				IBoardObjectOperation boardOperationType = boardObject.getOperation();
 				BoardObjectOperationType boardOp = boardOperationType.getOperationType();
 				
@@ -38,12 +45,14 @@ public class ObjectHandler implements INotificationHandler{
 				
 				case CREATE:
 					
+					//Extract parameters from the deserialized BoardObject
 					ArrayList<Pixel> newPixel = boardObject.getPixels();
 					ObjectId newObjId = boardObject.getObjectId();
 					Timestamp newTimestamp = boardObject.getTimestamp();
 					boolean newReset = boardObject.isResetObject();
 					ArrayList<Pixel> newPrevPixel = boardObject.getPrevIntensity();
 					
+					////Perform create operation on the BoardObject
 					CurveBuilder.drawCurve(
 							newPixel,
 							boardOperationType,
@@ -54,19 +63,23 @@ public class ObjectHandler implements INotificationHandler{
 							newReset
 					);
 					
+					//provides changes to the UI
 					CommunicateChange.provideChanges(newPixel, newPrevPixel);
 					break;
 				case DELETE:
 					
+					//Perform delete operation on the BoardObject
 					SelectDelete.delete(boardObject, newUserId);
 					break;
 				case ROTATE:
 					
+					//Angle of rotation of the object is obtain
 					Angle angleOfRotation = ((
 							RotateOperation)
 							boardOperationType).
 							getAngle();
 					
+					//Perform rotate operation on the BoardObject
 					ParameterizedOperationsUtil.rotationUtil(
 							boardObject,
 							newUserId,
@@ -75,11 +88,13 @@ public class ObjectHandler implements INotificationHandler{
 					break;
 				case COLOR_CHANGE:
 					
+					//Intensity is of the object is obtain
 					Intensity newIntensity = ((
 							ColorChangeOperation)
 							boardOperationType).
 							getIntensity();
 					
+					//Perform color change operation on the BoardObject
 					ParameterizedOperationsUtil.colorChangeUtil(
 							boardObject,
 							newUserId,
