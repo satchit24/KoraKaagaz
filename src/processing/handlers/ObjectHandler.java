@@ -74,13 +74,11 @@ public class ObjectHandler implements INotificationHandler{
 				case ROTATE:
 					
 					//Angle of rotation of the object is obtain
-					Angle angleOfRotation = ((
-							RotateOperation)
-							boardOperationType).
-							getAngle();
+					Angle angleOfRotation = ((RotateOperation)boardOperationType)
+					.getAngle();
 					
 					//Perform rotate operation on the BoardObject
-					ParameterizedOperationsUtil.rotationUtil(
+					ParameterizedOperationsUtil.rotation(
 							boardObject,
 							newUserId,
 							angleOfRotation
@@ -89,13 +87,11 @@ public class ObjectHandler implements INotificationHandler{
 				case COLOR_CHANGE:
 					
 					//Intensity is of the object is obtain
-					Intensity newIntensity = ((
-							ColorChangeOperation)
-							boardOperationType).
-							getIntensity();
+					Intensity newIntensity = ((ColorChangeOperation)boardOperationType)
+					.getIntensity();
 					
 					//Perform color change operation on the BoardObject
-					ParameterizedOperationsUtil.colorChangeUtil(
+					ParameterizedOperationsUtil.colorChange(
 							boardObject,
 							newUserId,
 							newIntensity
